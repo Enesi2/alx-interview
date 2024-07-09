@@ -1,21 +1,60 @@
 #!/usr/bin/python3
-"""Defines a function that determines if a box containing a list
-   of lists can be opened using keys stored in the lists.
-"""
+'''Minimum Operations python3 challenge'''
 
 
-def canUnlockAll(boxes):
-    """Determines if boxes can be unlocked."""
-    position = 0
-    unlocked = {}
+def minOperations(n):
+    '''calculates the fewest number of
+    operations needed to result in exactly n H
+    characters in this file.
+    Returns:
+        Integer : if n is impossible to achieve, return 0
+    '''
+    pasted_chars = 1  # how many chars in the file
+    clipboard = 0  # how many H's copied
+    counter = 0  # operations counter
 
-    for box in boxes:
-        if len(box) == 0 or position == 0:
-            unlocked[position] = "always_unlocked"
-        for key in box:
-            if key < len(boxes) and key != position:
-                unlocked[key] = key
-        if len(unlocked) == len(boxes):
-            return True
-        position += 1
-    return False
+    while pasted_chars < n:
+        # if did not copy anything yet
+        if clipboard == 0:
+            # copyall
+            clipboard = pasted_chars
+            # increment operations counter
+            counter += 1
+
+        # if haven't pasted anything yet
+        if pasted_chars == 1:
+            # paste
+            pasted_chars += clipboard
+            # increment operations counter
+            counter += 1
+            # continue to next loop
+            continue
+
+        remaining = n - pasted_chars  # remaining chars to Paste
+        # check if impossible by checking if clipboard
+        # has more than needed to reach the number desired
+        # which also means num of chars in file is equal
+        # or more than in the clipboard.
+        # in both situations it's impossible to achieve n of chars
+        if remaining < clipboard:
+            return 0
+
+        # if can't be devided
+        if remaining % pasted_chars != 0:
+            # paste current clipboard
+            pasted_chars += clipboard
+            # increment operations counter
+            counter += 1
+        else:
+            # copyall
+            clipboard = pasted_chars
+            # paste
+            pasted_chars += clipboard
+            # increment operations counter
+            counter += 2
+
+    # if got the desired result
+    if pasted_chars == n:
+        return counter
+    else:
+        return 0
